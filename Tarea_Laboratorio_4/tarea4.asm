@@ -4,7 +4,7 @@
         section .text
 
         mov     BP, array
-        mov     CX, length
+        
         call    Separar        
             
 
@@ -12,26 +12,38 @@
 
         section .data
 
-array  db      01,02,03,04,05,06,07,08,09,07   
-length db      $-array
+array  db      01,02,03,04,05,06,07,08,09,07,0xA   
 
 ; FUNCIONES
 
 ; funcion para separar numeros pares de numeros 
 Separar:
         xor     SI, SI          ; SI = 0
-for:
+while:
+        mov AL,[BP+SI]
+        cmp AL, 0xA
+        je  end
+
         mov AX,[BP+SI]
-        test AX,1
-        jz even
+        mov AH, 0
+        mov CX, 2
+        div CX
+        cmp AH, 0 
+        je  even
+        
         mov BX, 320h
-        mov AX,[BX+SI]
+        mov AL,[BP+SI]
+        mov [BX+SI],AL
         inc SI
-        loop for
-        ret
+    
        
 even:
+
         mov BX, 310h
-        mov [BX+SI],AX
+        mov AL,[BP+SI]
+        mov [BX+SI],AL
         inc SI
-        jmp for
+        jmp while
+
+end:
+        ret
